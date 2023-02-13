@@ -3,10 +3,10 @@ PC=True
 p2=""
 
 for i in range (len(p)):
-    if p[i].isspace:
+    if p[i]==" ":
         continue
     else:
-        p2=p[i]
+        p2+=p[i]
 
 for i in range (int(len(p2))//2):
     if p2[i]!=p2[-i-1]:
