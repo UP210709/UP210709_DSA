@@ -8,39 +8,62 @@ def operaciones(n1,n2,op):
     elif op=="/":
         return n1/n2
     
-def importancia(op,pos):
+def isNumeric(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+    
+def importancia(op):
     if op=="+" or op=="-":
-        pri[1].append(1)
-        pri[0].append(pos)
+        return 1
     elif op=="*" or op=="/" or op=="%":
-        pri[1].append(2)
-        pri[0].append(pos)
+        return 2
     elif op=="^":
-        pri[1].append(3)
-        pri[0].append(pos)
-    elif op=="(" or op==")":
-        pri[1].append(0)
-        pri[0].append(pos)
+        return 3
+    elif op==")":
+        return 4
+    elif op=="(":
+        return 0
+
+def i2p(p,stack=[],posfix=[]):
+    i=1
+    while i<int(len(p)):
+        if isNumeric(p[i]):
+            posfix.append(float(p[i])) 
+        elif importancia(p[i])==4:
+            while importancia(stack[-1])>0:
+                posfix.append(stack.pop())
+            stack.pop()
+        elif importancia(p[i]) >= importancia(stack[-1]) or importancia(p[i])==0:
+            stack.append(p[i])
+        else:
+            posfix.append(stack.pop())
+            stack.append(p[i])
+        i+=1
 
 Q="5 * ( 6 + 2 ) - 12 / 4"
-operacion="5*(6+2)-12/4"
-p=[5,6,2,'+',"*",12,4,"/","-"]
-pri=[[],[]]
+p=Q.split()
+
+stack=[]
+posfix=[]
+
+p.insert(0,'(')
+p.append(')')
+stack.append('(')
+
+i2p(p,stack,posfix)
+
 h=0
-
-for i in range(int(len(p))):
-    if type(p[i]) is str:
-        importancia(p[i],i)
-
-while(len(p)>1):
-    h=h%int(len(p))
-    if type(p[h]) is str:
-        op=p.pop(h)
-        n2=p.pop(h-1)
-        n1=p.pop(h-2)
+while(len(posfix)>1):
+    h=h%int(len(posfix))
+    if type(posfix[h]) is str:
+        op=posfix.pop(h)
+        n2=posfix.pop(h-1)
+        n1=posfix.pop(h-2)
         h-=2
-        p.insert(h,operaciones(n1,n2,op))
+        posfix.insert(h,operaciones(n1,n2,op))
     h+=1
 
-print(p)
-print(pri)
+print(posfix)
